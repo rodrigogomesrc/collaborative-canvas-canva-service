@@ -6,10 +6,10 @@ networks:
 
 services:
   postgres:
-    image: postgres:${POSTGRESQL_VERSION}
-    container_name: ${POSTGRESQL_NAME}
+    image: postgres:11
+    container_name: postgres-canva
     ports:
-      - ${POSTGRESQL_PORT_EXTERNAL}:5432
+      - "5433:5432"
     volumes:
       - ${POSTGRESQL_PATH}:/var/lib/postgresql/data
     networks:

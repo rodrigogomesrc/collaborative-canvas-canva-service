@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:19
 ARG WAR_FILE=target/*.war
 WORKDIR /opt/app
 COPY ${WAR_FILE} app.war
