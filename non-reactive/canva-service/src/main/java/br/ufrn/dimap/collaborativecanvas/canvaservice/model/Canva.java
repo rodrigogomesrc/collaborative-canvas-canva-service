@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "canva")
 public class Canva {
 
     @Id
@@ -15,6 +15,7 @@ public class Canva {
     private int creatorId;
     private String link;
     private long qtdPaintedPixels;
+
 
     @OneToMany(mappedBy = "canva")
     private List<Pixel> pixels;

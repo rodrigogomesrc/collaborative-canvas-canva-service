@@ -3,17 +3,18 @@ package br.ufrn.dimap.collaborativecanvas.canvaservice.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table
+@Table(name = "pixel")
 public class Pixel {
 
+    @Id
+    @GeneratedValue
+    private Long id;
     private Integer x;
     private Integer y;
     private String color;
     @ManyToOne
+    @JoinColumn(name = "canva_id")
     private Canva canva;
-    @Id
-    @GeneratedValue
-    private Long id;
 
     public Pixel() {
     }

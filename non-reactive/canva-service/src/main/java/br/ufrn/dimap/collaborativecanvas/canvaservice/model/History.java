@@ -1,12 +1,9 @@
 package br.ufrn.dimap.collaborativecanvas.canvaservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table
+@Table(name = "history")
 public class History {
 
     @Id
@@ -14,6 +11,10 @@ public class History {
     private Long id;
     private int playerId;
     private int paintingId;
+
+    @ManyToOne
+    @JoinColumn(name = "canva_id")
+    private Canva canva;
 
     public History() {
     }
@@ -23,6 +24,13 @@ public class History {
         this.paintingId = paintingId;
     }
 
+    public Canva getCanva() {
+        return canva;
+    }
+
+    public void setCanva(Canva canva) {
+        this.canva = canva;
+    }
 
     public Long getId() {
         return id;
