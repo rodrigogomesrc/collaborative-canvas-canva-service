@@ -3,6 +3,7 @@ package br.ufrn.dimap.collaborativecanvas.canvaservice.model;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,8 +16,7 @@ public class Canvas {
     @NotNull
     private String name;
     @NotNull
-    private Integer creatorId;
-
+    private Long creatorId;
     @Column(unique=true)
     private String link;
     private long qtdPaintedPixels;
@@ -30,16 +30,23 @@ public class Canvas {
     public Canvas() {
     }
 
-    public Canvas(Long id, String name, int creatorId, String link, long qtdPaintedPixels, List<Pixel> pixels, List<History> histories) {
+    public Canvas(Long id, @NotNull String name, @NotNull Long creatorId, @NotNull String link, int ySize, int xSize) {
         this.id = id;
         this.name = name;
         this.creatorId = creatorId;
         this.link = link;
-        this.qtdPaintedPixels = qtdPaintedPixels;
-        this.pixels = pixels;
-        this.histories = histories;
+        this.qtdPaintedPixels = 0;
+        this.pixels = new ArrayList<>();
+        this.histories = new ArrayList<>();
+        this.initializePixels(ySize, xSize);
     }
-
+    private void initializePixels(int ySize, int xSize) {
+        for (int i = 0; i < ySize; i++) {
+            for (int j = 0; j < xSize; j++) {
+                this.pixels.add(new Pixel(j, i, "white", this));
+            }
+        }
+    }
     public Long getId() {
         return id;
     }
@@ -56,11 +63,11 @@ public class Canvas {
         this.name = name;
     }
 
-    public int getCreatorId() {
+    public @NotNull Long getCreatorId() {
         return creatorId;
     }
 
-    public void setCreatorId(int creatorId) {
+    public void setCreatorId(@NotNull Long creatorId) {
         this.creatorId = creatorId;
     }
 
