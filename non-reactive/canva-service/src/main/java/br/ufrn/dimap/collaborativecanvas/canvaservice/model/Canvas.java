@@ -1,21 +1,25 @@
 package br.ufrn.dimap.collaborativecanvas.canvaservice.model;
 
 import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @Entity
-@Table(name = "canva")
-public class Canva {
+@Table(name = "canvas")
+public class Canvas {
 
     @Id
     @GeneratedValue
     private Long id;
+    @NotNull
     private String name;
-    private int creatorId;
+    @NotNull
+    private Integer creatorId;
+
+    @Column(unique=true)
     private String link;
     private long qtdPaintedPixels;
-
 
     @OneToMany(mappedBy = "canva")
     private List<Pixel> pixels;
@@ -23,10 +27,10 @@ public class Canva {
     @OneToMany(mappedBy = "canva")
     private List<History> histories;
 
-    public Canva() {
+    public Canvas() {
     }
 
-    public Canva(Long id, String name, int creatorId, String link, long qtdPaintedPixels, List<Pixel> pixels, List<History> histories) {
+    public Canvas(Long id, String name, int creatorId, String link, long qtdPaintedPixels, List<Pixel> pixels, List<History> histories) {
         this.id = id;
         this.name = name;
         this.creatorId = creatorId;

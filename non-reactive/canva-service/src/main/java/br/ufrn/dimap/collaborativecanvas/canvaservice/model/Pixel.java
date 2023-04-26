@@ -14,12 +14,12 @@ public class Pixel {
     private String color;
     @ManyToOne
     @JoinColumn(name = "canva_id")
-    private Canva canva;
+    private Canvas canva;
 
     public Pixel() {
     }
 
-    public Pixel(Integer x, Integer y, String color, Canva canva) {
+    public Pixel(Integer x, Integer y, String color, Canvas canva) {
         this.x = x;
         this.y = y;
         this.color = color;
@@ -50,11 +50,11 @@ public class Pixel {
         this.color = color;
     }
 
-    public Canva getCanva() {
+    public Canvas getCanva() {
         return canva;
     }
 
-    public void setCanva(Canva canva) {
+    public void setCanva(Canvas canva) {
         this.canva = canva;
     }
 

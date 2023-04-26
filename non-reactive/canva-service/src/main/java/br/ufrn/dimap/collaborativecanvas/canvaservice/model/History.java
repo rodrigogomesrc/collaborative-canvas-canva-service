@@ -13,8 +13,8 @@ public class History {
     private int paintingId;
 
     @ManyToOne
-    @JoinColumn(name = "canva_id")
-    private Canva canva;
+    @JoinColumn(name = "canvas_id")
+    private Canvas canva;
 
     public History() {
     }
@@ -24,11 +24,11 @@ public class History {
         this.paintingId = paintingId;
     }
 
-    public Canva getCanva() {
+    public Canvas getCanva() {
         return canva;
     }
 
-    public void setCanva(Canva canva) {
+    public void setCanva(Canvas canva) {
         this.canva = canva;
     }
 

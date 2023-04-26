@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.ufrn.dimap.collaborative-canvas</groupId>
-	<artifactId>canva-service</artifactId>
+	<artifactId>canvas-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>canva-service</name>
-	<description>Canva service for collaborative canvas</description>
+	<name>canvas-service</name>
+	<description>Canvas service for collaborative canvas</description>
 	<properties>
 		<java.version>19</java.version>
 	</properties>
@@ -35,7 +35,17 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+			<version>23.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
