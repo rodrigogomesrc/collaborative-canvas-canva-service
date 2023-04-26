@@ -9,7 +9,7 @@ services:
     image: postgres:11
     container_name: postgres-canva
     ports:
-      - "5433:5432"
+      - "5436:5432"
     volumes:
       - ${POSTGRESQL_PATH}:/var/lib/postgresql/data
     networks:
@@ -25,7 +25,7 @@ services:
     build: ../
     container_name: canva-service
     ports:
-      - "8083:8080"
+      - "8093:8080"
     networks:
         - canvas-network
     depends_on:

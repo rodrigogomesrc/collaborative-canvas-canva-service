@@ -21,10 +21,10 @@ public class Canvas {
     private String link;
     private long qtdPaintedPixels;
 
-    @OneToMany(mappedBy = "canva")
+    @OneToMany(mappedBy = "canva", cascade = CascadeType.ALL)
     private List<Pixel> pixels;
 
-    @OneToMany(mappedBy = "canva")
+    @OneToMany(mappedBy = "canva", cascade = CascadeType.ALL)
     private List<History> histories;
 
     public Canvas() {
