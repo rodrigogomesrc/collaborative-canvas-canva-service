@@ -13,17 +13,17 @@ public class Pixel {
     private Integer y;
     private String color;
     @ManyToOne
-    @JoinColumn(name = "canva_id")
-    private Canvas canva;
+    @JoinColumn(name = "canvas_id")
+    private Canvas canvas;
 
     public Pixel() {
     }
 
-    public Pixel(Integer x, Integer y, String color, Canvas canva) {
+    public Pixel(Integer x, Integer y, String color, Canvas canvas) {
         this.x = x;
         this.y = y;
         this.color = color;
-        this.canva = canva;
+        this.canvas = canvas;
     }
 
     public Integer getX() {
@@ -50,12 +50,12 @@ public class Pixel {
         this.color = color;
     }
 
-    public Canvas getCanva() {
-        return canva;
+    public Canvas getCanvas() {
+        return canvas;
     }
 
-    public void setCanva(Canvas canva) {
-        this.canva = canva;
+    public void setCanvas(Canvas canva) {
+        this.canvas = canva;
     }
 
     public void setId(Long id) {

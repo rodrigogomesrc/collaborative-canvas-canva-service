@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "canvas")
@@ -21,10 +23,10 @@ public class Canvas {
     private String link;
     private long qtdPaintedPixels;
 
-    @OneToMany(mappedBy = "canva", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL)
     private List<Pixel> pixels;
 
-    @OneToMany(mappedBy = "canva", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL)
     private List<History> histories;
 
     public Canvas() {
@@ -101,6 +103,26 @@ public class Canvas {
 
     public void setHistories(List<History> histories) {
         this.histories = histories;
+    }
+
+    public Pixel getPixelById(Long id) {
+        return this.pixels.stream()
+                .filter(pixel -> pixel.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+
+    }
+
+    public void addHistory(History history) {
+        this.histories.add(history);
+    }
+
+    public List<History> getNthHistories(int n) {
+        return this.histories.stream()
+                .sorted(Comparator.comparingLong(History::getId).reversed())
+                .limit(n)
+                .toList();
+
     }
 
 }

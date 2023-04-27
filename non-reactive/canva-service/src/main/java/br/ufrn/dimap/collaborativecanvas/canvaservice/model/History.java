@@ -9,27 +9,38 @@ public class History {
     @Id
     @GeneratedValue
     private Long id;
-    private int playerId;
-    private int paintingId;
+    private Long playerId;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pixel_id", referencedColumnName = "id")
+    private Pixel pixel;
 
     @ManyToOne
     @JoinColumn(name = "canvas_id")
-    private Canvas canva;
+    private Canvas canvas;
 
     public History() {
     }
 
-    public History(int playerId, int paintingId) {
+    public History(Long playerId, Pixel pixel) {
         this.playerId = playerId;
-        this.paintingId = paintingId;
+        this.pixel = pixel;
     }
 
-    public Canvas getCanva() {
-        return canva;
+    public Pixel getPixel() {
+        return pixel;
     }
 
-    public void setCanva(Canvas canva) {
-        this.canva = canva;
+    public void setPixel(Pixel pixel) {
+        this.pixel = pixel;
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
+    }
+
+    public void setCanvas(Canvas canva) {
+        this.canvas = canva;
     }
 
     public Long getId() {
@@ -40,20 +51,12 @@ public class History {
         this.id = id;
     }
 
-    public int getPlayerId() {
+    public Long getPlayerId() {
         return playerId;
     }
 
-    public void setPlayerId(int playerId) {
+    public void setPlayerId(Long playerId) {
         this.playerId = playerId;
-    }
-
-    public int getPaintingId() {
-        return paintingId;
-    }
-
-    public void setPaintingId(int paintingId) {
-        this.paintingId = paintingId;
     }
 
 }
