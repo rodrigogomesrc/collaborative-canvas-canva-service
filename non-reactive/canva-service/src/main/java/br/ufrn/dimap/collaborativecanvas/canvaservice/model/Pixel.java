@@ -1,10 +1,12 @@
 package br.ufrn.dimap.collaborativecanvas.canvaservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "pixel")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Pixel {
 
     @Id

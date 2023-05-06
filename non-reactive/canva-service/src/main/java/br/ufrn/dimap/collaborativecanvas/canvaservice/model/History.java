@@ -1,10 +1,12 @@
 package br.ufrn.dimap.collaborativecanvas.canvaservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "history")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class History {
 
     @Id
@@ -24,9 +26,10 @@ public class History {
     public History() {
     }
 
-    public History(Long playerId, Pixel pixel) {
+    public History(Long playerId, Pixel pixel, Canvas canva) {
         this.playerId = playerId;
         this.pixel = pixel;
+        this.canvas = canva;
     }
 
     public Pixel getPixel() {
