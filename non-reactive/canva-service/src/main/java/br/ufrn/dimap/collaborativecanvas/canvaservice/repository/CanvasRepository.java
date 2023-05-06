@@ -11,7 +11,7 @@ public interface CanvasRepository extends JpaRepository<Canvas, Long> {
 
     Optional<Canvas> findByLink(String link);
 
-    @Query(value = "SELECT * FROM Canvas e ORDER BY e.qtdPaintedPixels DESC LIMIT ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM Canvas e ORDER BY e.qtd_painted_pixels DESC LIMIT ?1", nativeQuery = true)
     Optional<List<Canvas>> findTopNByPaintedPixels(int limit);
 
 }

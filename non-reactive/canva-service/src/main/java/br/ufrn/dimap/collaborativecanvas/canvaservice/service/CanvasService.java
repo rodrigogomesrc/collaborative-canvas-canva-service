@@ -1,15 +1,14 @@
 package br.ufrn.dimap.collaborativecanvas.canvaservice.service;
 
-import br.ufrn.dimap.collaborativecanvas.canvaservice.model.History;
-import br.ufrn.dimap.collaborativecanvas.canvaservice.model.PaintingDTO;
-import br.ufrn.dimap.collaborativecanvas.canvaservice.model.Pixel;
+import br.ufrn.dimap.collaborativecanvas.canvaservice.model.*;
 import br.ufrn.dimap.collaborativecanvas.canvaservice.repository.CanvasRepository;
-import br.ufrn.dimap.collaborativecanvas.canvaservice.model.Canvas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CanvasService {
@@ -32,9 +31,10 @@ public class CanvasService {
         return randomLink.toString();
     }
 
-    public void createCanvas(String name, long creatorId) {
+    public Canvas createCanvas(String name, long creatorId) {
         Canvas newCanvas = new Canvas(null, name, creatorId, createRandomLink(), 50, 50);
         canvasRepository.save(newCanvas);
+        return newCanvas;
     }
 
     public void processPaiting(PaintingDTO painting){
@@ -55,12 +55,16 @@ public class CanvasService {
             Canvas canvas = canva.get();
             return canvas.getNthHistories(n);
         }
-        return null;
+        return new ArrayList<>();
     }
 
-    public List<Canvas> getTopNCanvas(int n){
+    public List<CanvasInfoDTO> getTopNCanvas(int n){
         Optional<List<Canvas>> canvas = canvasRepository.findTopNByPaintedPixels(n);
-        return canvas.orElse(null);
+        if(canvas.isEmpty()){
+            return new ArrayList<>();
+        }
+        List<Canvas> canvasList =  canvas.get();
+        return canvasList.stream().map(Canvas::toCanvasInfoDTO).collect(Collectors.toList());
     }
 
 }

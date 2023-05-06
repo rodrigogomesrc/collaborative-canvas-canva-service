@@ -1,5 +1,6 @@
 package br.ufrn.dimap.collaborativecanvas.canvaservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,6 +16,7 @@ public class History {
     @JoinColumn(name = "pixel_id", referencedColumnName = "id")
     private Pixel pixel;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "canvas_id")
     private Canvas canvas;

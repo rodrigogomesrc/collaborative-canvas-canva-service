@@ -125,4 +125,8 @@ public class Canvas {
 
     }
 
+    public CanvasInfoDTO toCanvasInfoDTO() {
+        return new CanvasInfoDTO(this.id, this.name, this.link, this.creatorId, this.qtdPaintedPixels);
+    }
+
 }
