@@ -1,22 +1,24 @@
 package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.service;
 
-import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.Canvas;
-import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.History;
-import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.PaintingDTO;
-import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.Pixel;
+import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.*;
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.repository.CanvasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CanvasService {
 
     private final CanvasRepository canvasRepository;
-    public CanvasService(@Autowired CanvasRepository canvasRepository) {
+    private final HistoryService historyService;
+
+    public CanvasService(@Autowired CanvasRepository canvasRepository, @Autowired HistoryService historyService) {
         this.canvasRepository = canvasRepository;
+        this.historyService = historyService;
     }
 
     public Canvas getCanvaByLink(String link) {
@@ -32,35 +34,41 @@ public class CanvasService {
         return randomLink.toString();
     }
 
-    public void createCanvas(String name, long creatorId) {
+    public Canvas createCanvas(String name, long creatorId) {
         Canvas newCanvas = new Canvas(null, name, creatorId, createRandomLink(), 50, 50);
         canvasRepository.save(newCanvas);
+        return newCanvas;
     }
 
-    public void processPaiting(PaintingDTO painting){
-        Long canvaId = painting.canvasId();
-        Optional<Canvas> canva = canvasRepository.findById(canvaId);
+    public boolean processPainting(PaintingDTO painting){
+        Long canvasId = painting.canvasId();
+        Optional<Canvas> canva = canvasRepository.findById(canvasId);
         if(canva.isPresent()){
             Canvas canvas = canva.get();
             canvas.setQtdPaintedPixels(canvas.getQtdPaintedPixels() + 1);
             Pixel pixel = canvas.getPixelById(painting.pixelId());
-            canvas.addHistory(new History(painting.playerId(), pixel));
+            if (pixel == null) {
+                return false;
+            }
+            pixel.setColor(painting.color());
+            canvas.addHistory(new History(painting.playerId(), pixel, canvas));
             canvasRepository.save(canvas);
+            return true;
         }
+        return false;
     }
 
     public List<History> getLastNHistories(Long canvasId, int n){
-        Optional<Canvas> canva = canvasRepository.findById(canvasId);
-        if(canva.isPresent()){
-            Canvas canvas = canva.get();
-            return canvas.getNthHistories(n);
-        }
-        return null;
+        return historyService.getTopNHistoriesFromCanvas(canvasId, n);
     }
 
-    public List<Canvas> getTopNCanvas(int n){
+    public List<CanvasInfoDTO> getTopNCanvas(int n){
         Optional<List<Canvas>> canvas = canvasRepository.findTopNByPaintedPixels(n);
-        return canvas.orElse(null);
+        if(canvas.isEmpty()){
+            return new ArrayList<>();
+        }
+        List<Canvas> canvasList =  canvas.get();
+        return canvasList.stream().map(Canvas::toCanvasInfoDTO).collect(Collectors.toList());
     }
 
 }

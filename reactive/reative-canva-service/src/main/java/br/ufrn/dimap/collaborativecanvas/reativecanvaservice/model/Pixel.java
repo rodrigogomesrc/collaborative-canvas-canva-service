@@ -1,9 +1,12 @@
 package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "pixel")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Pixel {
 
     @Id
@@ -12,6 +15,7 @@ public class Pixel {
     private Integer x;
     private Integer y;
     private String color;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "canvas_id")
     private Canvas canvas;

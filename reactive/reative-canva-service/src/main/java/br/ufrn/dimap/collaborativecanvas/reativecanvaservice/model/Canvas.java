@@ -1,5 +1,6 @@
 package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,14 +19,16 @@ public class Canvas {
     private String name;
     @NotNull
     private Long creatorId;
-    @Column(unique = true)
+    @Column(unique=true)
     private String link;
     private long qtdPaintedPixels;
 
+    @OrderBy("id ASC")
     @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL)
     private List<Pixel> pixels;
 
-    @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<History> histories;
 
     public Canvas() {
@@ -41,7 +44,6 @@ public class Canvas {
         this.histories = new ArrayList<>();
         this.initializePixels(ySize, xSize);
     }
-
     private void initializePixels(int ySize, int xSize) {
         for (int i = 0; i < ySize; i++) {
             for (int j = 0; j < xSize; j++) {
@@ -49,7 +51,6 @@ public class Canvas {
             }
         }
     }
-
     public Long getId() {
         return id;
     }
@@ -125,4 +126,10 @@ public class Canvas {
                 .toList();
 
     }
+
+    public CanvasInfoDTO toCanvasInfoDTO() {
+        return new CanvasInfoDTO(this.id, this.name, this.link, this.creatorId, this.qtdPaintedPixels);
+    }
+
 }
+
