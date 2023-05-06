@@ -1,0 +1,38 @@
+version: '3.9'
+
+networks:
+  canvas-network:
+    name: canvas-services
+
+services:
+  postgres:
+    image: postgres:11
+    container_name: postgres-canva
+    ports:
+      - "5436:5432"
+    volumes:
+      - ${POSTGRESQL_PATH}:/var/lib/postgresql/data
+    networks:
+      - canvas-network
+    environment:
+      TZ: America/Fortaleza
+      POSTGRES_DB: ${POSTGRESQL_DATABASE}
+      POSTGRES_USER: ${POSTGRESQL_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+    restart: always
+
+  canva-service:
+    build: ../
+    container_name: canva-service
+    ports:
+      - "8093:8080"
+    networks:
+        - canvas-network
+    depends_on:
+        - postgres
+    env_file:
+      - .env
+    restart: always
+
+
+
