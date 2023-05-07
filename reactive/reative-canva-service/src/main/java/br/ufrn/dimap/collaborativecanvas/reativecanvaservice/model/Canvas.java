@@ -1,38 +1,37 @@
 package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@Entity
-@Table(name = "canvas")
+@Table("canvas")
 public class Canvas {
 
     @Id
-    @GeneratedValue
     private Long id;
     @NotNull
     private String name;
     @NotNull
+    @Column("creator_id")
     private Long creatorId;
-    @Column(unique=true)
+
+    @Column("link")
     private String link;
+    @Column("qtd_painted_pixels")
     private long qtdPaintedPixels;
 
-    @OrderBy("id ASC")
-    @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL)
-    private List<Pixel> pixels;
+    @JsonIgnore
+    private List<Pixel> pixels = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<History> histories;
+    private List<History> histories = new ArrayList<>();
 
-    public Canvas() {
-    }
 
     public Canvas(Long id, @NotNull String name, @NotNull Long creatorId, @NotNull String link, int ySize, int xSize) {
         this.id = id;
@@ -40,14 +39,12 @@ public class Canvas {
         this.creatorId = creatorId;
         this.link = link;
         this.qtdPaintedPixels = 0;
-        this.pixels = new ArrayList<>();
-        this.histories = new ArrayList<>();
         this.initializePixels(ySize, xSize);
     }
     private void initializePixels(int ySize, int xSize) {
         for (int i = 0; i < ySize; i++) {
             for (int j = 0; j < xSize; j++) {
-                this.pixels.add(new Pixel(j, i, "white", this));
+                this.pixels.add(new Pixel(j, i, "white", this.getId()));
             }
         }
     }

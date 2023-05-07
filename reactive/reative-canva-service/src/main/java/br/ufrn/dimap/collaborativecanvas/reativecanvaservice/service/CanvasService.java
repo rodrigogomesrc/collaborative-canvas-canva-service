@@ -14,12 +14,11 @@ import java.util.stream.Collectors;
 public class CanvasService {
 
     private final CanvasRepository canvasRepository;
-    private final HistoryService historyService;
 
-    public CanvasService(@Autowired CanvasRepository canvasRepository, @Autowired HistoryService historyService) {
+    public CanvasService(@Autowired CanvasRepository canvasRepository) {
         this.canvasRepository = canvasRepository;
-        this.historyService = historyService;
     }
+    /*
 
     public Canvas getCanvaByLink(String link) {
         Optional<Canvas> canva = canvasRepository.findByLink(link);
@@ -51,15 +50,12 @@ public class CanvasService {
                 return false;
             }
             pixel.setColor(painting.color());
-            canvas.addHistory(new History(painting.playerId(), pixel, canvas));
+            History history = new History(painting.playerId(), pixel, canvas);
+            canvas.addHistory(history);
             canvasRepository.save(canvas);
             return true;
         }
         return false;
-    }
-
-    public List<History> getLastNHistories(Long canvasId, int n){
-        return historyService.getTopNHistoriesFromCanvas(canvasId, n);
     }
 
     public List<CanvasInfoDTO> getTopNCanvas(int n){
@@ -70,5 +66,7 @@ public class CanvasService {
         List<Canvas> canvasList =  canvas.get();
         return canvasList.stream().map(Canvas::toCanvasInfoDTO).collect(Collectors.toList());
     }
+
+     */
 
 }

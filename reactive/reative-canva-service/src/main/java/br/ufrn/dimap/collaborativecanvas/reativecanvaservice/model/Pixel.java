@@ -1,33 +1,37 @@
 package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table(name = "pixel")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table("pixel")
 public class Pixel {
 
     @Id
-    @GeneratedValue
     private Long id;
+
+    @Column("x")
     private Integer x;
+
+    @Column("y")
     private Integer y;
+
+    @Column("color")
     private String color;
+
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "canvas_id")
-    private Canvas canvas;
+    @Column("canvas_id")
+    private Long canvasId;
 
     public Pixel() {
     }
 
-    public Pixel(Integer x, Integer y, String color, Canvas canvas) {
+    public Pixel(Integer x, Integer y, String color, Long canvasId) {
         this.x = x;
         this.y = y;
         this.color = color;
-        this.canvas = canvas;
+        this.canvasId = canvasId;
     }
 
     public Integer getX() {
@@ -54,12 +58,12 @@ public class Pixel {
         this.color = color;
     }
 
-    public Canvas getCanvas() {
-        return canvas;
+    public Long getCanvasId() {
+        return canvasId;
     }
 
-    public void setCanvas(Canvas canva) {
-        this.canvas = canva;
+    public void setCanvasId(Long canvasId) {
+        this.canvasId = canvasId;
     }
 
     public void setId(Long id) {

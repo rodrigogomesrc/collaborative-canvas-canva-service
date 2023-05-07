@@ -1,51 +1,48 @@
 package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
-@Table(name = "history")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table("history")
 public class History {
 
     @Id
-    @GeneratedValue
     private Long id;
     private Long playerId;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "pixel_id", referencedColumnName = "id")
-    private Pixel pixel;
+    @JsonIgnore
+    @Column("pixel_id")
+    private Long pixelId;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "canvas_id")
-    private Canvas canvas;
+    @Column("canvas_id")
+    private Long canvasId;
 
     public History() {
     }
 
-    public History(Long playerId, Pixel pixel, Canvas canva) {
+    public History(Long playerId, Long pixelId, Long canvasId) {
         this.playerId = playerId;
-        this.pixel = pixel;
-        this.canvas = canva;
+        this.pixelId = pixelId;
+        this.canvasId = canvasId;
     }
 
-    public Pixel getPixel() {
-        return pixel;
+    public Long getPixelId() {
+        return pixelId;
     }
 
-    public void setPixel(Pixel pixel) {
-        this.pixel = pixel;
+    public void setPixelId(Long pixelId) {
+        this.pixelId = pixelId;
     }
 
-    public Canvas getCanvas() {
-        return canvas;
+    public Long getCanvasId() {
+        return canvasId;
     }
 
-    public void setCanvas(Canvas canva) {
-        this.canvas = canva;
+    public void setCanvasId(Long canvasId) {
+        this.canvasId = canvasId;
     }
 
     public Long getId() {
