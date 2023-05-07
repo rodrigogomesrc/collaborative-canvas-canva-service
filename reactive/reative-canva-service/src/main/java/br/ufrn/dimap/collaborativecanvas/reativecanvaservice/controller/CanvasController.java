@@ -1,16 +1,15 @@
 package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.controller;
 
-import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.Canvas;
-import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.CanvasInfoDTO;
-import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.CreateCanvasDTO;
-import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.History;
+import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.*;
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.service.CanvasService;
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.service.HistoryService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
@@ -27,15 +26,19 @@ public class CanvasController {
         this.historyService = historyService;
     }
 
-    /*
-    @PostMapping
-    public ResponseEntity<Canvas> createCanvas(@RequestBody @NotNull CreateCanvasDTO createCanvasDTO) {
-        if (createCanvasDTO.name() == null || createCanvasDTO.creatorId() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        Canvas createdCanvas = canvasService.createCanvas(createCanvasDTO.name(), createCanvasDTO.creatorId());
-        return ResponseEntity.status(201).body(createdCanvas);
+    @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Mono<CanvasDataDTO> getCanvasByLink(@RequestParam("link") @NotNull String link) {
+        return canvasService.getCanvasByLink(link);
     }
+
+    @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Mono<CanvasDataDTO> createCanvas(@RequestBody @NotNull CreateCanvasDTO createCanvasDTO) {
+        if (createCanvasDTO.name() == null || createCanvasDTO.creatorId() == null) {
+            return Mono.empty();
+        }
+        return canvasService.createCanvas(createCanvasDTO.name(), createCanvasDTO.creatorId());
+    }
+
 
     @GetMapping("/last-histories")
     public Flux<History> getLastNHistories(@RequestParam @NotNull Long canvasId, @RequestParam @NotNull Integer n){
@@ -48,6 +51,7 @@ public class CanvasController {
         return historyService.getTopNHistoriesFromCanvasWithUpdates(canvasId, n);
     }
 
+    /*
     @GetMapping("/top")
     public List<CanvasInfoDTO> getTop(@RequestParam @NotNull Integer n){
         return canvasService.getTopNCanvas(n);

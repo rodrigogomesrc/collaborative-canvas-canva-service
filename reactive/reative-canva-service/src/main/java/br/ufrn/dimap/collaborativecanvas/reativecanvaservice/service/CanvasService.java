@@ -2,27 +2,37 @@ package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.service;
 
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.*;
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.repository.CanvasRepository;
+import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.repository.PixelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CanvasService {
 
     private final CanvasRepository canvasRepository;
+    private final PixelService pixelService;
+    private final PixelRepository pixelRepository;
 
-    public CanvasService(@Autowired CanvasRepository canvasRepository) {
+    public CanvasService(
+            @Autowired CanvasRepository canvasRepository,
+            @Autowired PixelService pixelService,
+            @Autowired PixelRepository pixelRepository){
         this.canvasRepository = canvasRepository;
+        this.pixelService = pixelService;
+        this.pixelRepository = pixelRepository;
     }
-    /*
 
-    public Canvas getCanvaByLink(String link) {
-        Optional<Canvas> canva = canvasRepository.findByLink(link);
-        return canva.orElse(null);
+    public Mono<CanvasDataDTO> getCanvasByLink(String link) {
+        return canvasRepository.findByLink(link)
+                .flatMap(canvas -> {
+                    Mono<List<Pixel>> pixels = pixelService.getPixelsFromCanvas(canvas.getId()).collectList();
+                    return pixels.map(savedPixels -> new CanvasDataDTO(canvas, savedPixels));
+                });
     }
 
     private String createRandomLink() {
@@ -33,11 +43,23 @@ public class CanvasService {
         return randomLink.toString();
     }
 
-    public Canvas createCanvas(String name, long creatorId) {
-        Canvas newCanvas = new Canvas(null, name, creatorId, createRandomLink(), 50, 50);
-        canvasRepository.save(newCanvas);
-        return newCanvas;
+    public Mono<CanvasDataDTO> createCanvas(String name, long creatorId) {
+        Canvas newCanvas = new Canvas(null, name, creatorId, createRandomLink());
+
+        return canvasRepository.save(newCanvas)
+                .flatMap(savedCanvas -> {
+                    List<Pixel> pixels = savedCanvas.getPixels(50, 50);
+
+                    return Flux.fromIterable(pixels)
+                            .parallel()
+                            .runOn(Schedulers.boundedElastic())
+                            .flatMap(pixelRepository::save)
+                            .sequential()
+                            .collectList()
+                            .map(savedPixels -> new CanvasDataDTO(savedCanvas, savedPixels));
+                });
     }
+    /*
 
     public boolean processPainting(PaintingDTO painting){
         Long canvasId = painting.canvasId();
@@ -57,7 +79,10 @@ public class CanvasService {
         }
         return false;
     }
+    /*
+     */
 
+    /*
     public List<CanvasInfoDTO> getTopNCanvas(int n){
         Optional<List<Canvas>> canvas = canvasRepository.findTopNByPaintedPixels(n);
         if(canvas.isEmpty()){
@@ -68,5 +93,6 @@ public class CanvasService {
     }
 
      */
+
 
 }

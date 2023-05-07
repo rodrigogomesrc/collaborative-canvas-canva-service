@@ -1,4 +1,8 @@
-CREATE TABLE canvas (
+DROP TABLE IF EXISTS history;
+DROP TABLE IF EXISTS pixel;
+DROP TABLE IF EXISTS canvas;
+
+CREATE TABLE IF NOT EXISTS canvas (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     creator_id BIGINT NOT NULL,
@@ -6,7 +10,7 @@ CREATE TABLE canvas (
     qtd_painted_pixels BIGINT NOT NULL
 );
 
-CREATE TABLE pixel (
+CREATE TABLE IF NOT EXISTS pixel (
     id SERIAL PRIMARY KEY,
     x INTEGER NOT NULL,
     y INTEGER NOT NULL,
@@ -14,7 +18,7 @@ CREATE TABLE pixel (
     canvas_id BIGINT NOT NULL REFERENCES canvas(id)
 );
 
-CREATE TABLE history (
+CREATE TABLE IF NOT EXISTS history (
     id SERIAL PRIMARY KEY,
     player_id BIGINT NOT NULL,
     pixel_id BIGINT NOT NULL REFERENCES pixel(id),

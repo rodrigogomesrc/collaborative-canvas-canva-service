@@ -33,6 +33,12 @@ public class DataLoader implements ApplicationRunner {
 
         DatabaseClient databaseClient = DatabaseClient.create(connectionFactory);
         databaseClient.sql(content).fetch().rowsUpdated().block();
+
+        System.out.println("Creating canvas");
+        canvasService.createCanvas("canvas1", 1L).subscribe();
+        canvasService.createCanvas("canvas2", 2L).subscribe();
+        canvasService.createCanvas("canvas3", 3L).subscribe();
+
     }
 }
 
