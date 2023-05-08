@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface CanvasRepository extends JpaRepository<Canvas, Long> {
 
     Optional<Canvas> findByLink(String link);
+    Optional<Canvas> findById(Long id);
 
     @Query(value = "SELECT * FROM Canvas e ORDER BY e.qtd_painted_pixels DESC LIMIT ?1", nativeQuery = true)
     Optional<List<Canvas>> findTopNByPaintedPixels(int limit);

@@ -25,6 +25,10 @@ public class CanvasController {
     public Canvas getCanvaByLink(@RequestParam @NotNull String link) {
         return canvasService.getCanvaByLink(link);
     }
+    @GetMapping("/{id}")
+    public Canvas getCanvaById(@PathVariable @NotNull Long id) {
+        return canvasService.getCanvaById(id);
+    }
 
     @PostMapping
     public ResponseEntity<Canvas> createCanvas(@RequestBody @NotNull CreateCanvasDTO createCanvasDTO) {

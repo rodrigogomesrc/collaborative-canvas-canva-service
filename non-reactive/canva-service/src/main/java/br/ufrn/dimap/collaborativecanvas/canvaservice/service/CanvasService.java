@@ -25,6 +25,10 @@ public class CanvasService {
         Optional<Canvas> canva = canvasRepository.findByLink(link);
         return canva.orElse(null);
     }
+    public Canvas getCanvaById(Long id) {
+        Optional<Canvas> canva = canvasRepository.findById(id);
+        return canva.orElse(null);
+    }
 
     private String createRandomLink() {
         StringBuilder randomLink = new StringBuilder();
