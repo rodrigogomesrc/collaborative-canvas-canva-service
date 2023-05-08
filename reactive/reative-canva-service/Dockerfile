@@ -3,7 +3,8 @@ ARG JAR_FILE=target/*.jar
 WORKDIR /opt/app
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","app.jar", \
-"--spring.jpa.hibernate.ddl-auto=${JPA_HIBERNATE_DDL_AUTO}", \
-"--spring.datasource.url=jdbc:postgresql://${POSTGRESQL_HOST}:5432/${POSTGRESQL_DATABASE}",  \
-"--spring.datasource.username=${POSTGRESQL_USERNAME}", \
-"--spring.datasource.password=${POSTGRESQL_PASSWORD}"]
+"--app.database.drop=${DROP_TABLES}", \
+"--app.database.create=${CREATE_TABLES}", \
+"--spring.r2dbc.url=r2dbc:postgresql://${POSTGRESQL_HOST}:5432/${POSTGRESQL_DATABASE}",  \
+"--spring.r2dbc.username=${POSTGRESQL_USERNAME}", \
+"--spring.r2dbc.password=${POSTGRESQL_PASSWORD}"]
