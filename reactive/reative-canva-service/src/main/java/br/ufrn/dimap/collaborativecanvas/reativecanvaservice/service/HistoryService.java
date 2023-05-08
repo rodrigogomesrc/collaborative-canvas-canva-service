@@ -6,6 +6,7 @@ import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.repository.HistoryR
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
@@ -28,6 +29,11 @@ public class HistoryService {
         return Flux.interval(Duration.ofSeconds(1))
                 .flatMap(tick -> historyRepository.findLastNHistories(canvasId, n)
                         .subscribeOn(Schedulers.boundedElastic()));
+    }
+
+    public Mono<History> save(History history) {
+        return historyRepository.save(history)
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
 

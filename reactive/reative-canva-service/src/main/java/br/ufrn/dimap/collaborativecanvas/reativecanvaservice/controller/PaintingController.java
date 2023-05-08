@@ -3,6 +3,7 @@ package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.controller;
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.PaintingDTO;
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.service.CanvasService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +19,7 @@ public class PaintingController {
         this.canvasService = canvasService;
     }
 
-    /*
-    @PostMapping
+    @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Mono<ResponseEntity<Void>> processPainting(@RequestBody PaintingDTO painting) {
         if (painting == null || painting.canvasId() == null
                 || painting.playerId() == null
@@ -36,6 +36,4 @@ public class PaintingController {
                     return ResponseEntity.badRequest().build();
                 });
     }
-
-     */
 }

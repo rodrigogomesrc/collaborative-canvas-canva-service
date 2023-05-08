@@ -5,6 +5,7 @@ import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.repository.PixelRep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @Service
@@ -17,6 +18,16 @@ public class PixelService {
 
     public Flux<Pixel> getPixelsFromCanvas(Long canvasId) {
         return pixelRepository.findAllByCanvasId(canvasId)
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    public Mono<Pixel> save(Pixel pixel) {
+        return pixelRepository.save(pixel)
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    public Mono<Pixel> getPixelById(Long id) {
+        return pixelRepository.findById(id)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 }

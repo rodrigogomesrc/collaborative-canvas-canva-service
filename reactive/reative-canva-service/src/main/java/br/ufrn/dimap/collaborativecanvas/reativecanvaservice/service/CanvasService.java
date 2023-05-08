@@ -2,7 +2,6 @@ package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.service;
 
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.*;
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.repository.CanvasRepository;
-import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.repository.PixelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -16,19 +15,20 @@ public class CanvasService {
 
     private final CanvasRepository canvasRepository;
     private final PixelService pixelService;
-    private final PixelRepository pixelRepository;
+    private final HistoryService historyService;
 
     public CanvasService(
             @Autowired CanvasRepository canvasRepository,
             @Autowired PixelService pixelService,
-            @Autowired PixelRepository pixelRepository){
+            @Autowired HistoryService historyService){
         this.canvasRepository = canvasRepository;
         this.pixelService = pixelService;
-        this.pixelRepository = pixelRepository;
+        this.historyService = historyService;
     }
 
     public Mono<CanvasDataDTO> getCanvasByLink(String link) {
         return canvasRepository.findByLink(link)
+                .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(canvas -> {
                     Mono<List<Pixel>> pixels = pixelService.getPixelsFromCanvas(canvas.getId()).collectList();
                     return pixels.map(savedPixels -> new CanvasDataDTO(canvas, savedPixels));
@@ -53,46 +53,35 @@ public class CanvasService {
                     return Flux.fromIterable(pixels)
                             .parallel()
                             .runOn(Schedulers.boundedElastic())
-                            .flatMap(pixelRepository::save)
+                            .flatMap(pixelService::save)
                             .sequential()
                             .collectList()
                             .map(savedPixels -> new CanvasDataDTO(savedCanvas, savedPixels));
                 });
     }
-    /*
 
-    public boolean processPainting(PaintingDTO painting){
+    public Mono<Boolean> processPainting(PaintingDTO painting) {
         Long canvasId = painting.canvasId();
-        Optional<Canvas> canva = canvasRepository.findById(canvasId);
-        if(canva.isPresent()){
-            Canvas canvas = canva.get();
+        Mono<Canvas> canvasMono = canvasRepository.findById(canvasId);
+        return canvasMono.flatMap(canvas -> {
             canvas.setQtdPaintedPixels(canvas.getQtdPaintedPixels() + 1);
-            Pixel pixel = canvas.getPixelById(painting.pixelId());
-            if (pixel == null) {
-                return false;
-            }
-            pixel.setColor(painting.color());
-            History history = new History(painting.playerId(), pixel, canvas);
-            canvas.addHistory(history);
-            canvasRepository.save(canvas);
-            return true;
-        }
-        return false;
-    }
-    /*
-     */
-
-    /*
-    public List<CanvasInfoDTO> getTopNCanvas(int n){
-        Optional<List<Canvas>> canvas = canvasRepository.findTopNByPaintedPixels(n);
-        if(canvas.isEmpty()){
-            return new ArrayList<>();
-        }
-        List<Canvas> canvasList =  canvas.get();
-        return canvasList.stream().map(Canvas::toCanvasInfoDTO).collect(Collectors.toList());
+            return pixelService.getPixelById(painting.pixelId()).flatMap(pixel -> {
+                pixel.setColor(painting.color());
+                History history = new History(painting.playerId(), pixel.getId(), canvas.getId());
+                return historyService.save(history).flatMap(savedHistory -> {
+                    return canvasRepository.save(canvas).map(savedCanvas -> true);
+                });
+            }).defaultIfEmpty(false);
+        }).defaultIfEmpty(false);
     }
 
-     */
+
+    public Flux<Canvas> getTopNCanvas(int n){
+        return canvasRepository.findTopNByPaintedPixels(n)
+                .subscribeOn(Schedulers.boundedElastic()
+        );
+
+    }
 
 
 }

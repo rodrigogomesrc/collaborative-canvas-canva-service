@@ -6,13 +6,10 @@ import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.service.HistoryServ
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/canvas")
@@ -40,23 +37,21 @@ public class CanvasController {
     }
 
 
-    @GetMapping("/last-histories")
+    @GetMapping(value="/last-histories", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<History> getLastNHistories(@RequestParam @NotNull Long canvasId, @RequestParam @NotNull Integer n){
         return historyService.getTopNHistoriesFromCanvas(canvasId, n).subscribeOn(Schedulers.boundedElastic());
     }
 
-    @GetMapping("/last-histories/update")
+    @GetMapping(value="/last-histories/update", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<History> getLastNHistoriesWithUpdates(
             @RequestParam @NotNull Long canvasId, @RequestParam @NotNull Integer n){
         return historyService.getTopNHistoriesFromCanvasWithUpdates(canvasId, n);
     }
 
-    /*
-    @GetMapping("/top")
-    public List<CanvasInfoDTO> getTop(@RequestParam @NotNull Integer n){
+    @GetMapping(value="/top",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<Canvas> getTop(@RequestParam @NotNull Integer n){
         return canvasService.getTopNCanvas(n);
     }
 
-     */
 
 }
