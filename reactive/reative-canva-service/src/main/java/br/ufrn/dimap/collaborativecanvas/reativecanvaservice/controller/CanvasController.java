@@ -36,14 +36,13 @@ public class CanvasController {
         return canvasService.createCanvas(createCanvasDTO.name(), createCanvasDTO.creatorId());
     }
 
-
     @GetMapping(value="/last-histories", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<History> getLastNHistories(@RequestParam @NotNull Long canvasId, @RequestParam @NotNull Integer n){
+    public Flux<HistoryDataDTO> getLastNHistories(@RequestParam @NotNull Long canvasId, @RequestParam @NotNull Integer n){
         return historyService.getTopNHistoriesFromCanvas(canvasId, n).subscribeOn(Schedulers.boundedElastic());
     }
 
     @GetMapping(value="/last-histories/update", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<History> getLastNHistoriesWithUpdates(
+    public Flux<HistoryDataDTO> getLastNHistoriesWithUpdates(
             @RequestParam @NotNull Long canvasId, @RequestParam @NotNull Integer n){
         return historyService.getTopNHistoriesFromCanvasWithUpdates(canvasId, n);
     }
