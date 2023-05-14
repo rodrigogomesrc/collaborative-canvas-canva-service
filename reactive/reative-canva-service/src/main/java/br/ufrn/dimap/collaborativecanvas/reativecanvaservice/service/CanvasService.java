@@ -9,6 +9,8 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -18,6 +20,7 @@ public class CanvasService {
     private final CanvasRepository canvasRepository;
     private final PixelService pixelService;
     private final HistoryService historyService;
+    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     public CanvasService(
             @Autowired CanvasRepository canvasRepository,
@@ -54,7 +57,8 @@ public class CanvasService {
 
                     return Flux.fromIterable(pixels)
                             .parallel()
-                            .runOn(Schedulers.boundedElastic())
+                            .runOn(Schedulers.fromExecutor(executorService))
+                            //.runOn(Schedulers.boundedElastic())
                             .flatMap(pixelService::save)
                             .sequential()
                             .collectList()
