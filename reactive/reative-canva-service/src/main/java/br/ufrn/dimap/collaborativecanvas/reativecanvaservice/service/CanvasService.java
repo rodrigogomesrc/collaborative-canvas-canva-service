@@ -76,8 +76,8 @@ public class CanvasService {
                 History history = new History(painting.playerId(), pixel.getId(), canvas.getId());
                 return historyService.save(history).flatMap(savedHistory -> canvasRepository.save(canvas)
                         .map(savedCanvas -> true));
-            }).defaultIfEmpty(false);
-        }).defaultIfEmpty(false);
+            }).defaultIfEmpty(false).subscribeOn(Schedulers.fromExecutor(executorService));
+        }).defaultIfEmpty(false).subscribeOn(Schedulers.fromExecutor(executorService));
     }
 
 
