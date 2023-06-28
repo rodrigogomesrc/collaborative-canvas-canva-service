@@ -4,8 +4,8 @@ import br.ufrn.dimap.collaborativecanvas.canvaservice.exception.BadRequestExcept
 import br.ufrn.dimap.collaborativecanvas.canvaservice.model.PaintingDTO;
 import br.ufrn.dimap.collaborativecanvas.canvaservice.service.CanvasService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +21,7 @@ public class PaitingController {
     }
 
     @CachePut(value = "canvas-histories", key = "#painting.canvasId()")
+    @CacheEvict(value = "canvas-by-id", key = "#painting.canvasId()")
     @PostMapping
     public String processPainting(@RequestBody PaintingDTO painting) {
         if( painting == null || painting.canvasId() == null

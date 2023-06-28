@@ -25,7 +25,7 @@ public class Canvas implements Serializable {
     private long qtdPaintedPixels;
 
     @OrderBy("id ASC")
-    @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "canvas", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Pixel> pixels;
 
     @JsonIgnore

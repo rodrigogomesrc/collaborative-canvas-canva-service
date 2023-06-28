@@ -23,7 +23,6 @@ public class CanvasController {
         this.canvasService = canvasService;
     }
 
-    @Cacheable("canvas-by-link")
     @GetMapping
     public Canvas getCanvaByLink(@RequestParam @NotNull String link) {
         return canvasService.getCanvaByLink(link);
