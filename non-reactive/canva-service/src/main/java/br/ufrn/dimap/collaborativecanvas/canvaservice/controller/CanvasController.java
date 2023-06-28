@@ -7,6 +7,8 @@ import br.ufrn.dimap.collaborativecanvas.canvaservice.model.History;
 import br.ufrn.dimap.collaborativecanvas.canvaservice.service.CanvasService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +23,13 @@ public class CanvasController {
         this.canvasService = canvasService;
     }
 
+    @Cacheable("canvas-by-link")
     @GetMapping
     public Canvas getCanvaByLink(@RequestParam @NotNull String link) {
         return canvasService.getCanvaByLink(link);
     }
+
+    @Cacheable("canvas-by-id")
     @GetMapping("/{id}")
     public Canvas getCanvaById(@PathVariable @NotNull Long id) {
         return canvasService.getCanvaById(id);
@@ -39,6 +44,7 @@ public class CanvasController {
         return ResponseEntity.status(201).body(createdCanvas);
     }
 
+    @Cacheable(value = "canvas-histories", key = "#canvasId")
     @GetMapping("/last-histories")
     public List<History> getLastNHistories(@RequestParam @NotNull Long canvasId, @RequestParam @NotNull Integer n){
         return canvasService.getLastNHistories(canvasId, n);

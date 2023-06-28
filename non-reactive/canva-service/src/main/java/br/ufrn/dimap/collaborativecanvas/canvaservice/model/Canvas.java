@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 @Entity
 @Table(name = "canvas")
-public class Canvas {
+public class Canvas implements Serializable {
 
     @Id
     @GeneratedValue

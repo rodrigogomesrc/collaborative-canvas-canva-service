@@ -22,7 +22,6 @@ public class CanvasController {
         this.canvasService = canvasService;
         this.historyService = historyService;
     }
-
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Mono<CanvasDataDTO> getCanvasByLink(@RequestParam("link") @NotNull String link) {
         return canvasService.getCanvasByLink(link);
