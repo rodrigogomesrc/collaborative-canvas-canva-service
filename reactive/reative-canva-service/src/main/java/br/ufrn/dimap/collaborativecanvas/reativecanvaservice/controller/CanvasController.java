@@ -4,6 +4,7 @@ import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.model.*;
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.service.CanvasService;
 import br.ufrn.dimap.collaborativecanvas.reativecanvaservice.service.HistoryService;
 import org.jetbrains.annotations.NotNull;
+import org.redisson.codec.TypedJsonJacksonCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,31 +20,34 @@ public class CanvasController {
 
     private final CanvasService canvasService;
     private final HistoryService historyService;
+    private final RMapCacheReactive<String, CanvasDataDTO> canvasCache;
 
-    @Autowired
-    private RedissonReactiveClient cacheClient;
-
-    private final RMapCacheReactive<String, Canvas> canvasCache;
-    private final RMapCacheReactive<String, HistoryDataDTO> historyCache;
-
-    public CanvasController(@Autowired CanvasService canvasService, @Autowired HistoryService historyService) {
+    public CanvasController(@Autowired CanvasService canvasService,
+                            @Autowired HistoryService historyService,
+                            @Autowired RedissonReactiveClient client) {
         this.canvasService = canvasService;
         this.historyService = historyService;
-        this.canvasCache = cacheClient.getMapCache("canvas-cache");
-        this.historyCache = cacheClient.getMapCache("history-cache");
+        this.canvasCache = client.getMapCache("/canvas/", new TypedJsonJacksonCodec(String.class, CanvasDataDTO.class));
     }
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Mono<CanvasDataDTO> getCanvasByLink(@RequestParam("link") @NotNull String link) {
         return canvasService.getCanvasByLink(link);
     }
 
+    @GetMapping(value = "/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Mono<CanvasDataDTO> getCanvasById(@PathVariable @NotNull Long id) {
+        System.out.println("antes de salvar no cache");
+        return canvasCache.get("canvas-by-id::" + id).switchIfEmpty(
+                this.canvasService.getCanvasById(id)
+                        .flatMap(canvas -> this.canvasCache.fastPut("canvas-by-id::" + id, canvas).thenReturn(canvas))
+                        .doOnNext(canvas -> System.out.println("salvou no cache"))
+        );
+    }
 
     @GetMapping(value="/last-histories", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<HistoryDataDTO> getLastNHistories(@RequestParam @NotNull Long canvasId, @RequestParam @NotNull Integer n){
-        //return historyService.getTopNHistoriesFromCanvas(canvasId, n).subscribeOn(Schedulers.boundedElastic());
-        return historyCache.get("canvas-histories::"+canvasId).switchIfEmpty(historyService.getTopNHistoriesFromCanvas(canvasId, n));
+        return historyService.getTopNHistoriesFromCanvas(canvasId, n).subscribeOn(Schedulers.boundedElastic());
     }
-
 
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Mono<CanvasDataDTO> createCanvas(@RequestBody @NotNull CreateCanvasDTO createCanvasDTO) {
@@ -52,14 +56,6 @@ public class CanvasController {
         }
         return canvasService.createCanvas(createCanvasDTO.name(), createCanvasDTO.creatorId());
     }
-
-
-    @GetMapping(value="/last-histories", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<HistoryDataDTO> getLastNHistories(@RequestParam @NotNull Long canvasId, @RequestParam @NotNull Integer n){
-        //return historyService.getTopNHistoriesFromCanvas(canvasId, n).subscribeOn(Schedulers.boundedElastic());
-        return historyCache.get("canvas-histories::"+canvasId).switchIfEmpty(historyService.getTopNHistoriesFromCanvas(canvasId, n));
-    }
-
 
     @GetMapping(value="/last-histories/update", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<HistoryDataDTO> getLastNHistoriesWithUpdates(
