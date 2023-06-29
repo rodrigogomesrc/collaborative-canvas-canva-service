@@ -10,13 +10,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import org.redisson.api.RMapCacheReactive;
+import org.redisson.api.RedissonReactiveClient;
 
 @RestController
 @RequestMapping("/painting")
 public class PaintingController {
+
+    //@Autowired
+    //private RedissonReactiveClient cacheClient;
+
     private final CanvasService canvasService;
+
+   // private final RMapCacheReactive<String, Canvas> canvasCache;
+
     public PaintingController(@Autowired CanvasService canvasService) {
         this.canvasService = canvasService;
+        //this.canvasCache = cacheClient.getMapCache("canvas-cache");
     }
 
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
