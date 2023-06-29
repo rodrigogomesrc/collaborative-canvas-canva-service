@@ -36,11 +36,9 @@ public class CanvasController {
 
     @GetMapping(value = "/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Mono<CanvasDataDTO> getCanvasById(@PathVariable @NotNull Long id) {
-        System.out.println("antes de salvar no cache");
         return canvasCache.get("canvas-by-id::" + id).switchIfEmpty(
                 this.canvasService.getCanvasById(id)
                         .flatMap(canvas -> this.canvasCache.fastPut("canvas-by-id::" + id, canvas).thenReturn(canvas))
-                        .doOnNext(canvas -> System.out.println("salvou no cache"))
         );
     }
 
