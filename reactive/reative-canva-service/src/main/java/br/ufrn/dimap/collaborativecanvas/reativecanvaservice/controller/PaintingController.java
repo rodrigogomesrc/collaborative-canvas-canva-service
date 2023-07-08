@@ -30,6 +30,7 @@ public class PaintingController {
         this.canvasCache = client.getMapCache("/canvas/", new TypedJsonJacksonCodec(String.class, CanvasDataDTO.class));
     }
 
+    /*
     @PostMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Mono<ResponseEntity<Object>> processPainting(@RequestBody PaintingDTO painting) {
         return Mono.justOrEmpty(painting)
@@ -46,6 +47,8 @@ public class PaintingController {
                 })
                 .switchIfEmpty(Mono.just(ResponseEntity.badRequest().build()));
     }
+
+     */
 
     private boolean isPaintingValid(PaintingDTO painting) {
         return painting.canvasId() != null && painting.playerId() != null &&
