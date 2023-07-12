@@ -3,7 +3,6 @@ import java.util.List;
 
 public class CanvasDataDTO {
 
-
     private Long id;
     private String name;
     private Long creatorId;
@@ -19,7 +18,9 @@ public class CanvasDataDTO {
         this.link = canvas.getLink();
         this.qtdPaintedPixels = canvas.getQtdPaintedPixels();
         this.pixels = pixels;
+    }
 
+    public CanvasDataDTO() {
     }
 
     public Long getId() {

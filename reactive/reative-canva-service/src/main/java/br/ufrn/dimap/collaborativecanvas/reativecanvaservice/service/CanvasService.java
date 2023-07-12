@@ -40,6 +40,15 @@ public class CanvasService {
             });
     }
 
+    public Mono<CanvasDataDTO> getCanvasById(Long id) {
+        return canvasRepository.findById(id)
+            .subscribeOn(Schedulers.boundedElastic())
+            .flatMap(canvas -> {
+                Mono<List<Pixel>> pixels = pixelService.getPixelsFromCanvas(canvas.getId()).collectList();
+                    return pixels.map(savedPixels -> new CanvasDataDTO(canvas, savedPixels));
+            });
+    }
+
     private String createRandomLink() {
         return IntStream.range(0, 15)
                 .mapToObj(i -> (char) (Math.random() * 26 + 97))

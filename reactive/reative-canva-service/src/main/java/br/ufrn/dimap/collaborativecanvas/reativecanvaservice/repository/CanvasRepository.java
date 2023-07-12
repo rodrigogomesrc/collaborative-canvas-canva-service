@@ -12,6 +12,8 @@ public interface CanvasRepository extends ReactiveCrudRepository<Canvas, Long> {
 
     Mono<Canvas> findByLink(String link);
 
+    Mono<Canvas> findById(Long id);
+
     @Query("SELECT * FROM Canvas e ORDER BY e.qtd_painted_pixels DESC LIMIT :limit")
     Flux<Canvas> findTopNByPaintedPixels(@Param("limit") int limit);
 
