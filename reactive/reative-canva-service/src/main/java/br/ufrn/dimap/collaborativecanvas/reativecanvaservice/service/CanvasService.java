@@ -32,6 +32,7 @@ public class CanvasService {
     }
 
     public Mono<CanvasDataDTO> getCanvasByLink(String link) {
+        System.out.println("getCanvasByLink");
         return canvasRepository.findByLink(link)
             .subscribeOn(Schedulers.boundedElastic())
             .flatMap(canvas -> {
@@ -41,6 +42,7 @@ public class CanvasService {
     }
 
     public Mono<CanvasDataDTO> getCanvasById(Long id) {
+        System.out.println("getCanvasById");
         return canvasRepository.findById(id)
             .subscribeOn(Schedulers.boundedElastic())
             .flatMap(canvas -> {
@@ -58,6 +60,7 @@ public class CanvasService {
 
 
     public Mono<CanvasDataDTO> createCanvas(String name, long creatorId) {
+        System.out.println("createCanvas");
         Canvas newCanvas = new Canvas(null, name, creatorId, createRandomLink());
 
         return canvasRepository.save(newCanvas)
@@ -76,6 +79,7 @@ public class CanvasService {
     }
 
     public Mono<Boolean> processPainting(PaintingDTO painting) {
+        System.out.println("processPainting");
         Long canvasId = painting.canvasId();
         Mono<Canvas> canvasMono = canvasRepository.findById(canvasId);
         return canvasMono.flatMap(canvas -> {
@@ -91,6 +95,7 @@ public class CanvasService {
 
 
     public Flux<Canvas> getTopNCanvas(int n){
+        System.out.println("getTopNCanvas");
         return canvasRepository.findTopNByPaintedPixels(n)
                 .subscribeOn(Schedulers.boundedElastic()
         );

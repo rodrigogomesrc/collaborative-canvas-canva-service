@@ -24,6 +24,7 @@ public class HistoryService {
     }
 
     public Flux<HistoryDataDTO> getTopNHistoriesFromCanvas(Long canvasId, int n) {
+        System.out.println("getTopNHistoriesFromCanvas");
         return historyRepository.findLastNHistories(canvasId, n)
             .flatMap(history -> pixelService.getPixelById(history.getPixelId())
             .map(pixel -> new HistoryDataDTO(history, pixel)));
