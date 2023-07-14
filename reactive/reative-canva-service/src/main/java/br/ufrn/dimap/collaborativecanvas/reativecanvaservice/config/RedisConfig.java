@@ -1,4 +1,4 @@
-package br.ufrn.dimap.collaborativecanvas.canvaservice.config;
+package br.ufrn.dimap.collaborativecanvas.reativecanvaservice.config;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonReactiveClient;
